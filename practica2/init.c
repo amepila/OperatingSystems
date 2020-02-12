@@ -7,21 +7,20 @@
 int main(void)
 {
 	int counter = 0;
-	int status_child;
 
-	do
+	while (counter < NUMBER_CHILDS);
 	{
-		status_child = fork();
 
-		if (status_child < 0)
-		{
-			printf("error\n");
-		}else if(status_child == 0)
+		if (fork() == 0)
 		{
 			execl("/usr/bin/xterm","xterm","-hold","-e","./getty","getty",(char*)NULL);
-			counter = counter + 1;
+			counter++;
+		}else
+		{
+			printf("error\n");
+
 		}
-	} while (counter < NUMBER_CHILDS);
+	}
 
 	return 0;
 }
