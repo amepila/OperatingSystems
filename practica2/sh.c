@@ -19,10 +19,10 @@ int main(void)
 
 		if(strcmp(command,"exit") == 0)
 		{
-			execlp("./getty","getty",(char*)NULL);
+			execlp("./getty","getty",NULL);
 		}else if(strcmp(command,"shutdown") == 0)
 		{
-			execl("/usr/bin/killall","killall","./init,","./getty","./sh",(char *)NULL);
+			execl("/usr/bin/killall","killall","./init","./getty","./sh","/usr/bin/xterm",NULL);
 		}else
 		{
 			argv[0] = command;

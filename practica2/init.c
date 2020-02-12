@@ -13,7 +13,7 @@ int main(void)
 	while (counter < NUMBER_CHILDS)
 	{
 		if(fork() == 0)
-			execl("/usr/bin/xterm","xterm","-hold","-e","./getty","getty",(char*)NULL);
+			execl("/usr/bin/xterm","xterm","-hold","-e","./getty","getty",NULL);
 		else 
 			wait(NULL);
 		counter++;

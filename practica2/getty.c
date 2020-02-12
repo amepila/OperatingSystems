@@ -134,7 +134,7 @@ int main(void)
 	}
 
 	if(fork() == 0)
-		execlp("./sh","sh",(char*)NULL);
+		execlp("./sh","sh",NULL);
 	else 
 		wait(NULL);
 	return 0;
