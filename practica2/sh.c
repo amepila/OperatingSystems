@@ -17,6 +17,7 @@ int main(void)
 	int counter2;
 	int len_cmd;
 	int flag_space;
+	char amp[LENGTH_TEXT] = "&";
 
 	for(;;)
 	{
@@ -33,7 +34,7 @@ int main(void)
 			if(command[counter1] == ASCII_SPACE)
 				flag_space = 1;
 		}
-
+		
 		if(flag_space)
 		{
 			for(counter1 = 0; command[counter1] != ASCII_SPACE; counter1++)
@@ -49,9 +50,6 @@ int main(void)
 			memset(command,0,strlen(command));
 			memcpy(command,temp1,strlen(temp1));
 			argv[1] = temp2;
-
-			printf("%s\n", command);
-			printf("%s\n", argv[1]);
 		}
 
 		if(strcmp(command,"exit") == 0)
@@ -66,10 +64,10 @@ int main(void)
 			if(fork() == 0)
 				
 				execvp(command,argv);
-			else
+			else if(strcmp(temp2, amp))
 				wait(NULL);
 		}
-		
+
 		argv[0] = NULL;
 		argv[1] = NULL;
 		memset(temp1,0,strlen(temp1));
