@@ -133,7 +133,7 @@ int main(void)
 	}
 
 	if(!fork())
-		exelcp("./sh","sh",(char*)NULL);
-	
+		execlp("./sh","sh",(char*)NULL);
+
 	return 0;
 }
