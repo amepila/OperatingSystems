@@ -4,19 +4,22 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define	NUMBER_CHILDS	3
+#define	NUMBER_CHILDS	2
 
 int main(void)
 {
 	int counter = 0;
 
-	while (counter < NUMBER_CHILDS)
+	for(;;)
 	{
-		if(fork() == 0)
-			execl("/usr/bin/xterm","xterm","-hold","-e","./getty","getty",NULL);
-		else 
-			wait(NULL);
-		counter++;
+		while (counter < NUMBER_CHILDS)
+		{
+			if(fork() == 0)
+				execl("/usr/bin/xterm","xterm","-hold","-e","./getty","getty",NULL);
+			counter++;
+		}
+		wait(NULL);
+		counter--;
 	}
 	return 0;
 }
