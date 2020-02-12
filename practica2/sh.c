@@ -7,7 +7,7 @@
 
 int main(void)
 {
-	char *argv[2] = {NULL,NULL};
+	char *argv[3] = {NULL,NULL,NULL};
 	char command[LENGTH_TEXT] = {0};
 	char temp[LENGTH_TEXT] = {0};
 
