@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #define LENGTH_TEXT 30
 #define ASCII_COLON	58
@@ -132,8 +133,9 @@ int main(void)
 		memset(real_password2,0,strlen(real_password2));
 	}
 
-	if(!fork())
+	if(fork() == 0)
 		execlp("./sh","sh",(char*)NULL);
-
+	else 
+		wait(NULL);
 	return 0;
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #define LENGTH_TEXT 30
 
@@ -25,8 +26,14 @@ int main(void)
 		}else
 		{
 			argv[0] = command;
-			execvp(command,argv);
+			if(fork() == 0)
+				
+				execvp(command,argv);
+			else
+				wait(NULL);
 		}
+		memset(temp,0,strlen(temp));
+		memset(command,0,strlen(command));
 	}
 	return 0;
 }
