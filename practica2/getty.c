@@ -1,10 +1,24 @@
+/**
+  \archivo		getty.c   
+  \descripcion	Este archivo representa al proceso getty
+  				el cual valida el usuario y contrasenas
+  				con un documento passwd.txt, con la finalidad
+  				de iniciar con el proceso sh
+  \autores 		Jose Andres Hernandez Hernandez 
+  				Andrea Miriam Perez Huizar 
+  \fecha   		12/Feb/20
+ */
+
+/* Librerias*/
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
-#define LENGTH_TEXT 30
-#define ASCII_COLON	58
+/* Macros*/
+#define LENGTH_TEXT 30	/* Longitud de los strings*/
+#define ASCII_COLON	58	/* Codigo ASCII del simbolo ':'*/
+
 
 void getText(char *user1, char *user2)
 {
