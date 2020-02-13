@@ -1,7 +1,7 @@
 /**
   \archivo		init.c   
   \descripcion	Esta funcion representa al proceso init,
-  				que se encarga de inicializar, 6 procesos
+  				que se encarga de inicializar 6 procesos
   				getty en terminal Xterm. Cada vez que un
   				procesos o ventana Xterm sea cerrada, se 
   				crea otro proceso, es decir, siempre tiene
@@ -37,13 +37,13 @@ int main(void)
 		{
 			if(fork() == 0) /* Cuando el proceso se crea se ejecuta en Xterm*/
 				execl("/usr/bin/xterm","xterm","-hold","-e","./getty","getty",NULL);
-			counter++;	/* Contador que controla el numero de procesos*/
+			counter++;		/* Contador que controla el numero de procesos*/
 		}
-		wait(NULL);	/* Se espera a que los procesos creados realicen su trabajo*/
-		counter--;	/* En caso de que un proceso haya terminado al cerrarse su ventana
-						este decrementara en uno para regresar al while a crear el 
-						proceso faltante
-					*/
+		wait(NULL);			/* Se espera a que los procesos creados realicen su trabajo*/
+		counter--;			/* En caso de que un proceso haya terminado al cerrarse su ventana
+								este decrementara en uno para regresar al while a crear el 
+								proceso faltante
+							*/
 	}
 	return 0;
 }
