@@ -19,11 +19,9 @@ int main(void)
 
 	for(counter = 0; counter < LIMIT; counter++)
 	{
-		if(counter == 0)
-			sum += (1.0/(2*counter + 1));
-		else if(counter % 2 == 0)
+		if(counter % 2 == 0)
 			sum += (1.0/((2*counter) + 1));
-		else if(counter % 2 != 0)
+		else
 			sum -= (1.0/((2*counter) + 1));
 	}
 

@@ -4,7 +4,9 @@
 #include <pthread.h>
 
 #define NTHREADS 	4
+#define NCLONES		4
 #define LIMIT		2000000000
+#define	STACK_SIZE	(1024*1024)
 
 void *leibniz(void *args)
 {
@@ -37,6 +39,19 @@ int main(void)
 	int counter;
 	int param[NTHREADS];
 	pthread_t tid[NTHREADS];
+
+	pid_t pid;
+	int clones[NCLONES];
+	void *stack;
+
+	stack = malloc(STACK_SIZE);
+	if(stack == NULL)
+		printf("ERROR STACK\n");
+
+	pid = clone(leibniz,stack,CLONE_NEWUTS|SIGCHILD,(void *)&clones[counter]);
+	if(pid == -1)
+		printf("ERROR CLONE\n");
+	printf("clone() returned %ld\n", (long)pid);
 
 	gettimeofday(&ts, NULL);
 	start_ts = ts.tv_sec; // Tiempo inicial
