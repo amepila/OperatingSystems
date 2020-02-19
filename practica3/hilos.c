@@ -12,11 +12,11 @@ void *leibniz(void *args)
 	float sum = 0;
 
 	int idhilo = *((int *) args);
-	int inicio =(TAM/NTHREADS)*idhilo;
-	int fin = (TAM/NTHREADS)*(idhilo+1);
-	printf("Hilo %d inicia en %d y termina en %d\n", idhilo,inicio,fin);
+	int inicio =(LIMIT/NTHREADS)*idhilo;
+	int fin = (LIMIT/NTHREADS)*(idhilo+1);
 
-	for(counter = 0; counter < LIMIT; counter++)
+	printf("Hilo %d inicia en %d y termina en %d\n", idhilo,inicio,fin);
+	for(counter = inicio; counter < fin; counter++)
 	{
 		if(counter == 0)
 			sum += (1.0/(2*counter + 1));
@@ -25,6 +25,7 @@ void *leibniz(void *args)
 		else if(counter % 2 != 0)
 			sum -= (1.0/((2*counter) + 1));
 	}
+	printf("SUMA TOTAL = %f\n", sum);
 }
 
 int main(void)
