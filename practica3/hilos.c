@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <sys/time.h>
+#include <pthread.h>
+
 
 #define LIMIT	2000000000
 
