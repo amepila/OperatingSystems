@@ -1,23 +1,21 @@
 #include <stdio.h>
-#include <math.h>
+#include <stdlib.h>
 #include <sys/time.h>
-#include <pthread.h>
 
-#define NTHREADS 	4
 #define NCLONES		4
 #define LIMIT		2000000000
-#define	STACK_SIZE	(1024*1024)
+#define	STACK_SIZE	(1024*64)
 
 void *leibniz(void *args)
 {
 	int counter;
 	float sum = 0;
 
-	int idhilo = *((int *) args);
-	int inicio =(LIMIT/NTHREADS)*idhilo;
-	int fin = (LIMIT/NTHREADS)*(idhilo+1);
+	int idclone = *((int *) args);
+	int inicio =(LIMIT/NCLONES)*idclone;
+	int fin = (LIMIT/NCLONES)*(idclone+1);
 
-	printf("Hilo %d inicia en %d y termina en %d\n", idhilo,inicio,fin);
+	printf("Clon %d inicia en %d y termina en %d\n", idclon,inicio,fin);
 	for(counter = inicio; counter < fin; counter++)
 	{
 		if(counter % 2 == 0)
@@ -36,35 +34,26 @@ int main(void)
 	long lElapsedTime;
 	struct timeval ts;
 
-	int counter;
-	int param[NTHREADS];
-	pthread_t tid[NTHREADS];
-
 	pid_t pid;
-	int clones[NCLONES];
-	void *stack;
-
-	stack = malloc(STACK_SIZE);
-	if(stack == NULL)
-		printf("ERROR STACK\n");
-
-	pid = clone(leibniz,stack,CLONE_NEWUTS|SIGCHILD,(void *)&clones[counter]);
-	if(pid == -1)
-		printf("ERROR CLONE\n");
-	printf("clone() returned %ld\n", (long)pid);
+	int counter;
+	int param[NCLONES];
+	void *stack[NCLONES];
 
 	gettimeofday(&ts, NULL);
 	start_ts = ts.tv_sec; // Tiempo inicial
 
-	for (counter = 0; counter < NTHREADS; counter++)
+	for (counter = 0; counter < NCLONES; counter++)
 	{
-		param[counter] = counter;
-		pthread_create(&tid[counter],NULL,leibniz,(void *)&param[counter]);
-	}
+		stack[counter] = malloc(STACK_SIZE);
+		if(stack[counter] == NULL)
+			printf("ERROR STACK\n");
 
-	//Esperar a que los hilos terminen
-	for (counter = 0; counter < NTHREADS; counter++)
-		pthread_join(tid[counter],NULL);
+		param[counter] = counter;
+		pid = clone(leibniz,stack[counter],CLONE_NEWUTS|SIGCHILD,(void *)&param[counter]);
+		if(pid == -1)
+			printf("ERROR CLONE\n");
+		printf("clone() returned %ld\n", (long)pid);
+	}
 
 	gettimeofday(&ts, NULL);
 	stop_ts = ts.tv_sec; // Tiempo final
@@ -72,6 +61,9 @@ int main(void)
 	elapsed_time = stop_ts - start_ts;
 	printf("------------------------------\n");
 	printf("TIEMPO TOTAL, %lld segundos\n",elapsed_time);
-	//printf("SUMA TOTAL = %f\n", sum);
+
+	for(counter = 0; counter < NCLONES; counter++)
+		free(stack[counter]);
+
 	return 0;
 }
