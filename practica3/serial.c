@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <math.h>
 #include <sys/time.h>
 
 #define LIMIT	2000000000
@@ -12,7 +11,7 @@ int main(void)
 	long lElapsedTime;
 	struct timeval ts;
 	int counter;
-	float sum = 0;
+	double sum = 0;
 
 	gettimeofday(&ts, NULL);
 	start_ts = ts.tv_sec; // Tiempo inicial
@@ -31,6 +30,6 @@ int main(void)
 	elapsed_time = stop_ts - start_ts;
 	printf("------------------------------\n");
 	printf("TIEMPO TOTAL, %lld segundos\n",elapsed_time);
-	printf("SUMA TOTAL = %f\n", sum);
+	printf("SUMA TOTAL = %lf\n", sum);
 	return 0;
 }

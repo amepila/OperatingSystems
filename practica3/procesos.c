@@ -1,14 +1,13 @@
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
-#include <sched.h>
-#include <signal.h>
 #include <sys/time.h>
 #include <sys/wait.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/types.h>
 
-#define NCLONES		4
+#define NPROCESS	4
 #define LIMIT		2000000000
-#define	STACK_SIZE	(1024*64)
 
 double sum_total;
 
@@ -17,9 +16,9 @@ int leibniz(void *args)
 	int counter;
 	double sum = 0;
 
-	int idclone = *((int *) args);
-	int begin =(LIMIT/NCLONES)*idclone;
-	int end = (LIMIT/NCLONES)*(idclone+1);
+	int idprocess = *((int *) args);
+	int begin =(LIMIT/NPROCESS)*idprocess;
+	int end = (LIMIT/NPROCESS)*(idprocess+1);
 
 	for(counter = begin; counter < end; counter++)
 	{
@@ -41,28 +40,26 @@ int main(void)
 	struct timeval ts;
 
 	int status;
-	pid_t pid[NCLONES];
+	pid_t pid[NPROCESS];
 	int counter;
-	int param[NCLONES];
-	void *stack[NCLONES];
+	int param[NPROCESS];
 
 	gettimeofday(&ts, NULL);
 	start_ts = ts.tv_sec; // Tiempo inicial
 
-	for (counter = 0; counter < NCLONES; counter++)
-	{
-		stack[counter] = malloc(STACK_SIZE);
-		if(stack[counter] == NULL)
-			printf("ERROR STACK\n");
+	shmget(IPC_PRIVATE,sizeof(sum_total), IPC_CREATE);
+	shmat();
 
-		param[counter] = counter;
-		pid[counter] = clone(&leibniz,(char *)stack[counter] + STACK_SIZE,
-			SIGCHLD|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_VM,(void *)&param[counter]);
-		if(pid[counter] == -1)
-			printf("ERROR CLONE\n");
+	for (counter = 0; counter < NPROCESS; counter++)
+	{
+		pid[counter] = fork();
+		if(pid[counter] == 0)
+			leibniz((void *)&counter);
+		else
+			printf("ERROR FORK\n");
 	}
 
-	for(counter = 0; counter < NCLONES; counter++)
+	for(counter = 0; counter < NPROCESS; counter++)
 	{
 		pid[counter] = wait(&status);
 		if(pid[counter] == -1)
@@ -76,9 +73,6 @@ int main(void)
 	printf("------------------------------\n");
 	printf("TIEMPO TOTAL, %lld segundos\n",elapsed_time);
 	printf("SUMA TOTAL = %lf\n", sum_total);
-
-	for(counter = 0; counter < NCLONES; counter++)
-		free(stack[counter]);
 
 	return 0;
 }

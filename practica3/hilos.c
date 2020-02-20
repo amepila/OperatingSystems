@@ -4,24 +4,27 @@
 #include <pthread.h>
 
 #define NTHREADS 	4
-#define LIMIT	2000000000
-float sum;
+#define LIMIT		2000000000
+#define DEBUG		0
+
+double sum_total;
 
 void *leibniz(void *args)
 {
+	double sum = 0;
 	int counter;
 	int idhilo = *((int *) args);
-	int inicio =(LIMIT/NTHREADS)*idhilo;
-	int fin = (LIMIT/NTHREADS)*(idhilo+1);
+	int begin =(LIMIT/NTHREADS)*idhilo;
+	int end = (LIMIT/NTHREADS)*(idhilo+1);
 
-	//printf("Hilo %d inicia en %d y termina en %d\n", idhilo,inicio,fin);
-	for(counter = inicio; counter < fin; counter++)
+	for(counter = begin; counter < end; counter++)
 	{
 		if(counter % 2 == 0)
 			sum += (1.0/((2*counter) + 1));
 		else
-			sum -= (1.0/((2*counter) + 1));
+			sum -= (1.0/((2*counter) + 1));;
 	}
+	sum_total = sum_total + sum;
 }
 
 int main(void)
@@ -55,6 +58,6 @@ int main(void)
 	elapsed_time = stop_ts - start_ts;
 	printf("------------------------------\n");
 	printf("TIEMPO TOTAL, %lld segundos\n",elapsed_time);
-	printf("SUMA TOTAL = %f\n", sum);
+	printf("SUMA TOTAL = %lf\n", sum_total);
 	return 0;
 }
