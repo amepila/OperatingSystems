@@ -1,12 +1,16 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
+#include <sched.h>
+#include <signal.h>
 #include <sys/time.h>
+#include <sys/wait.h>
 
 #define NCLONES		4
 #define LIMIT		2000000000
 #define	STACK_SIZE	(1024*64)
 
-void *leibniz(void *args)
+int leibniz(void *args)
 {
 	int counter;
 	float sum = 0;
@@ -15,7 +19,7 @@ void *leibniz(void *args)
 	int inicio =(LIMIT/NCLONES)*idclone;
 	int fin = (LIMIT/NCLONES)*(idclone+1);
 
-	printf("Clon %d inicia en %d y termina en %d\n", idclon,inicio,fin);
+	printf("Clon %d inicia en %d y termina en %d\n", idclone,inicio,fin);
 	for(counter = inicio; counter < fin; counter++)
 	{
 		if(counter % 2 == 0)
@@ -24,6 +28,7 @@ void *leibniz(void *args)
 			sum -= (1.0/((2*counter) + 1));
 	}
 	printf("SUMA TOTAL = %f\n", sum);
+	return 0;
 }
 
 int main(void)
@@ -34,6 +39,7 @@ int main(void)
 	long lElapsedTime;
 	struct timeval ts;
 
+	int status;
 	pid_t pid;
 	int counter;
 	int param[NCLONES];
@@ -49,10 +55,14 @@ int main(void)
 			printf("ERROR STACK\n");
 
 		param[counter] = counter;
-		pid = clone(leibniz,stack[counter],CLONE_NEWUTS|SIGCHILD,(void *)&param[counter]);
+		pid = clone(&leibniz,(char *)stack[counter] + STACK_SIZE,
+			SIGCHLD|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_VM,(void *)&param[counter]);
 		if(pid == -1)
 			printf("ERROR CLONE\n");
-		printf("clone() returned %ld\n", (long)pid);
+
+		pid = wait(&status);
+		if(pid == -1)
+			printf("ERROR WAIT\n");
 	}
 
 	gettimeofday(&ts, NULL);
