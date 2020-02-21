@@ -8,35 +8,28 @@
 #include <sys/types.h>
 
 #define NPROCESS	4
-#define LIMIT		2000
+#define LIMIT		2000000000
 
-double *sum_total;
+long double *memshared;
 
-int leibniz(void *args)
+void leibniz(int idprocess)
 {
 	int counter;
-	double sum = 0;
-
-	int idprocess = *((int *) args);
+	long double sum = 0;
 	int begin =(LIMIT/NPROCESS)*idprocess;
 	int end = (LIMIT/NPROCESS)*(idprocess+1);
 
-	printf("Proceso %d inicia en %d y termina en %d\n", idprocess,begin,end);
 	for(counter = begin; counter < end; counter++)
 	{
-		/*
+		
 		if(counter % 2 == 0)
 			sum += (1.0/((2*counter) + 1));
 		else
 			sum -= (1.0/((2*counter) + 1));
-			*/
-		sum++;
+		
 	}
-
-	*sum_total += sum;
-	printf("sum = %lf\n", *sum_total);
-
-	return 0;
+	*memshared += sum;
+	exit(0);
 }
 
 int main(void)
@@ -47,29 +40,28 @@ int main(void)
 	long lElapsedTime;
 	struct timeval ts;
 
-	int status;
 	int shmid;
-	pid_t pid;
 	int counter;
-	int param[NPROCESS];
+	long double sum_total = 0;
+	struct shmid_ds buff;
 
 	gettimeofday(&ts, NULL);
 	start_ts = ts.tv_sec; // Tiempo inicial
 
-	shmid = shmget(IPC_PRIVATE,sizeof(sum_total), IPC_CREAT | 0666);
-	sum_total = shmat(shmid,NULL,0);
+	shmid = shmget(IPC_PRIVATE,NPROCESS*sizeof(double), IPC_CREAT | 0666);
+	memshared = shmat(shmid,NULL,0);
 	for (counter = 0; counter < NPROCESS; counter++)
 	{
 		if(fork() == 0)
-		{
-			leibniz((void *)&counter);
-		}
-		else
-		{
-			wait(NULL);
-			shmdt(sum_total);
-		}
+			leibniz(counter);
 	}
+
+	for(counter = 0; counter < NPROCESS; counter++)
+		wait(NULL);
+
+	sum_total = *memshared;
+	shmdt(memshared);
+	shmctl(shmid,IPC_RMID,&buff);
 
 	gettimeofday(&ts, NULL);
 	stop_ts = ts.tv_sec; // Tiempo final
@@ -77,7 +69,7 @@ int main(void)
 	elapsed_time = stop_ts - start_ts;
 	printf("------------------------------\n");
 	printf("TIEMPO TOTAL, %lld segundos\n",elapsed_time);
-	printf("SUMA TOTAL = %lf\n", *sum_total);
+	printf("SUMA TOTAL = %LG\n", sum_total);
 		
 	return 0;
 }
