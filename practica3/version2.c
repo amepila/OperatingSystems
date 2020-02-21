@@ -20,7 +20,7 @@
 #define LIMIT		2000000000	/* Numero de iteraciones*/
 #define DEBUG		0			/* Macro para habilitar bugeo*/
 
-double sum_total;				/* Suma total global de la serie*/
+long double sum_total;			/* Suma total global de la serie*/
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -33,7 +33,7 @@ double sum_total;				/* Suma total global de la serie*/
  */
 void *leibniz(void *args)
 {
-	double sum = 0;							/* Acumulador de suma*/
+	long double sum = 0;					/* Acumulador de suma*/
 	int counter;							/* Contador de iteraciones*/
 	int idhilo = *((int *) args);			/* Numero de hilo*/
 	int begin =(LIMIT/NTHREADS)*idhilo;		/* Inicio de iteracion del hilo*/
@@ -42,11 +42,16 @@ void *leibniz(void *args)
 	/* Ciclo que realiza la sumatoria de la serie de Leibniz*/
 	for(counter = begin; counter < end; counter++)
 	{
+#if DEBUG 
+		sum++;	/* Operacion para debugueo*/					
+#else
 		if(counter % 2 == 0)				/* Alternancia de suma o resta*/
 			sum += (1.0/((2*counter) + 1));	/* Si el conteo es divisible entre dos*/
 		else 								/*  en entero se suma a la serie*/
 			sum -= (1.0/((2*counter) + 1));	/* Si el conteo no es divisible entre dos*/
-	}										/*  es decir, deja residuo diferente de cero, resta*/
+											/*  es decir, deja residuo diferente de cero, resta*/
+#endif
+	}
 	sum_total = sum_total + sum;			/* Acumulacion de las sumas en variable global*/
 }
 
@@ -83,6 +88,6 @@ int main(void)
 	elapsed_time = stop_ts - start_ts;
 	printf("------------------------------\n");
 	printf("TIEMPO TOTAL, %lld segundos\n",elapsed_time);
-	printf("SUMA TOTAL = %lf\n", sum_total);
+	printf("SUMA TOTAL = %LG\n", sum_total);
 	return 0;
 }
