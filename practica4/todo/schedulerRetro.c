@@ -19,28 +19,29 @@ extern int unblockevent;
 
 /* Tipo de dato de las queue*/
 QUEUE ready;
+QUEUE current;
 QUEUE waitinginevent[MAXTHREAD];
-QUEUE priority_q[MAXTHREAD];
+QUEUE priority[MAXTHREAD];
 
 /* Variables globales*/
-int status_ready = 1;	/* Estado del listo*/
-int current_q = 0;		/* Actual tiempo q*/
+int status_ready;
 
 void scheduler(int arguments)
 {
 	int old,next;
 	int changethread=0;
 	int waitingthread=0;
+	int counter;
 	
 	int event=arguments & 0xFF00;
 	int callingthread=arguments & 0xFF;
 
 	if(event==NEWTHREAD)
 	{
-		/* Un nuevo hilo va a la cola de listos*/
+		/* Un nuevo hilo de maxima prioridad va a la cola de listos*/
 		threads[callingthread].status=READY;
-		_enqueue(&priority_q[0],callingthread);
-		status_ready++;		/* El estado de listo se activa*/
+		_enqueue(&priority[0],callingthread);
+		status_ready=1; /* Indica que hay hilos*/
 	}
 	
 	if(event==BLOCKTHREAD)
@@ -56,52 +57,55 @@ void scheduler(int arguments)
 		/* Al momento que el hilo termina, se cambia a otro*/
 		threads[callingthread].status=END;
 		changethread=1;
-		status_ready--;		/*Al terminar el estado de listo vuelve a cero*/
 	}
 	
 	if(event==UNBLOCKTHREAD)
 	{
 		/* El hilo pasa a la cola de listos*/
 		threads[callingthread].status=READY;
-		/* Si el tiempo q esta en el maximo o ultimo elemento se desbloquea*/
-		if((MAXTHREAD-1) == current_q)
-			_enqueue(&priority_q[current_q],callingthread);	/* Se desbloquea el actual*/
-		else
-			_enqueue(&priority_q[current_q+1],callingthread); /* Sino se desbloquea el siguiente*/
+		_enqueue(&ready,callingthread);
 	}
 
 	if(event==TIMER)
 	{
 		/* Se verifica que el hilo este corriendo*/
-		if(threads[callingthread].status==RUNNING)
+		if((status_ready) && (threads[callingthread].status==RUNNING))
 		{
-			threads[callingthread].status=READY;
-			/* Si es la unica prioridad se pasa a cola de listos sino el siguiente pasa*/
-			if((status_ready == 1)||(MAXTHREAD-1) == current_q)
-				_enqueue(&priority_q[current_q],callingthread);
-			else
-				_enqueue(&priority_q[current_q+1],callingthread);
+			/* Se verifican los hilos*/
+			for(counter = 0; counter < MAXTHREAD; counter++)
+			{
+				/* Si verifica el de prioridad mas alta disponible*/
+				if(!_emptyq(&priority[counter]))
+				{
+					/* Se coloca al de siguiente prioridad en listos*/
+					threads[callingthread].status=READY;
+					_enqueue(&priority[counter],callingthread);
+					current=priority[counter];
+					break;
+				}
+			}
+			changethread=1;
 		}
 	}
 
 	if(changethread)
 	{
-		int counter;
-		old=currthread;
-
-		/* Se verifican los hilos*/
-		for(counter = 0; counter < MAXTHREAD; counter++)
+		/* Se cambia de hilo al de mayor prioridad*/
+		if(threads[callingthread].status==END)
 		{
-			/* Si verifica el de prioridad mas alta disponible*/
-			if(!_emptyq(&priority_q[counter]))
-			{
-				/* Se coloca como el siguiente y sale del ciclo*/
-				next=_dequeue(&priority_q[counter]);
-				current_q = counter;
-				break;
-			}
+			old=currthread;
+			next=_dequeue(&ready);
+
+			threads[next].status=RUNNING;
+			_swapthreads(old,next);
+		}else
+		{
+			old=currthread;
+			next=_dequeue(&current);
+
+			threads[next].status=RUNNING;
+			_swapthreads(old,next);
 		}
-		threads[next].status=RUNNING;
-		_swapthreads(old,next);
+		
 	}
 }
