@@ -19,9 +19,9 @@ extern int unblockevent;
 
 /* Tipo de dato de las queue*/
 QUEUE ready;
-QUEUE current;
 QUEUE waitinginevent[MAXTHREAD];
 QUEUE priority[MAXTHREAD];
+QUEUE *current=&priority[0];
 
 /* Variables globales*/
 int status_ready;
@@ -75,12 +75,17 @@ void scheduler(int arguments)
 			for(counter = 0; counter < MAXTHREAD; counter++)
 			{
 				/* Si verifica el de prioridad mas alta disponible*/
-				if(!_emptyq(&priority[counter]))
+				if(_emptyq(&priority[counter])==0)
 				{
 					/* Se coloca al de siguiente prioridad en listos*/
 					threads[callingthread].status=READY;
-					_enqueue(&priority[counter],callingthread);
-					current=priority[counter];
+					//_enqueue(&priority[counter+1],callingthread);	
+
+					if(counter < MAXTHREAD-1)
+						_enqueue(&priority[counter+1],callingthread);
+					else
+						_enqueue(&priority[counter],callingthread);
+					current=&priority[counter];
 					break;
 				}
 			}
@@ -95,14 +100,12 @@ void scheduler(int arguments)
 		{
 			old=currthread;
 			next=_dequeue(&ready);
-
 			threads[next].status=RUNNING;
 			_swapthreads(old,next);
 		}else
 		{
 			old=currthread;
-			next=_dequeue(&current);
-
+			next=_dequeue(current);
 			threads[next].status=RUNNING;
 			_swapthreads(old,next);
 		}
