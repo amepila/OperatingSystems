@@ -79,8 +79,6 @@ void scheduler(int arguments)
 				{
 					/* Se coloca al de siguiente prioridad en listos*/
 					threads[callingthread].status=READY;
-					//_enqueue(&priority[counter+1],callingthread);	
-
 					if(counter < MAXTHREAD-1)
 						_enqueue(&priority[counter+1],callingthread);
 					else
