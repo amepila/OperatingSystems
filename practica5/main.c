@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include "semaphore.h"
 
 //Macro que incluye el codigo de la instruccion maquina xchg
 #define atomic_xchg(A,B)	_asm_volatile( \ 
@@ -13,28 +14,8 @@
 
 #define CICLOS 10
 
-typedef struct Semaphore
-{
-	
-} Semaphore_t;
-
 char *pais[3] = {"Peru","Bolivia","Colombia"};
 int *g;
-
-void initsem()
-{
-
-}
-
-void waitsem()
-{
-
-}
-
-void signalsem()
-{
-
-}
 
 void proceso(int i)
 {
