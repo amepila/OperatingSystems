@@ -11,7 +11,7 @@ void enqueue(Queue_t *q, int val)
 	q->elements[q->head] = val;
 	// Incrementa al apuntador
 	q->head++;
-	q->head = q->head%MAXTHREAD;
+	q->head = q->head%3;
 }
 
 int dequeue(Queue_t *q)
@@ -20,7 +20,7 @@ int dequeue(Queue_t *q)
 	valret = q->elements[q->tail];
 	// Incrementa al apuntador
 	q->tail++;
-	q->tail = q->tail%MAXTHREAD;
+	q->tail = q->tail%3;
 	return(valret);
 }
 

@@ -18,7 +18,6 @@ void proceso(int i)
 		sleep(rand()%3);
 		printf("- %s Sale\n", pais[i]);
 
-		//fflush(stdout);
 		signalsem(Semp);
 		sleep(rand()%3);
 	}
@@ -27,10 +26,16 @@ void proceso(int i)
 
 int main(void)
 {
-	int shmid_g, shmid_h;
+	int shmid;
+	int shmid_g;
+	int shmid_h;
 	int pid;
 	int status;
 	int counter;
+
+	shmid = shmget(0x1234,sizeof(Semaphore_t *), IPC_CREAT | 0666);
+	if(shmid == -1)
+		printf("ERROR SHMGET SEMAPHORE\n");
 
 	shmid_g = shmget(0x5678,sizeof(g), IPC_CREAT | 0666);
 	if(shmid_g == -1)
@@ -40,6 +45,10 @@ int main(void)
 	if(shmid_h == -1)
 		printf("ERROR SHMGET H\n");
 	
+	Semp = shmat(shmid,NULL,0);
+	if(Semp == NULL)
+		printf("ERROR SHMAT SEMAPHORE\n");
+
 	g = shmat(shmid_g,NULL,0);
 	if(g == NULL)
 		printf("ERROR SHMAT G");
@@ -48,22 +57,20 @@ int main(void)
 	if(h == NULL)
 		printf("ERROR SHMAT G");
 
-	*g = 0;
-	*h = 0;
 	initsem(Semp,1);
 
 	srand(getpid());
-	for(counter = 0; counter < MAXTHREAD; counter++)
+	for(counter = 0; counter < 3; counter++)
 	{
 		pid = fork();
 		if(pid == 0)
 			proceso(counter);
 	}
 
-	for(counter = 0; counter < MAXTHREAD; counter++)
+	for(counter = 0; counter < 3; counter++)
 		pid = wait(&status);
 	
-	clearsem(Semp);
+	shmdt(Semp);
 	shmdt(g);
 	shmdt(h);
 

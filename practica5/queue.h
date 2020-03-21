@@ -1,15 +1,14 @@
 #ifndef QUEUE_H_
 #define QUEUE_H_
 
-#include <ucontext.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <ucontext.h>
 
-#define MAXTHREAD 3
 
 typedef struct Queue 
 {
-	int elements[MAXTHREAD];
+	int elements[3];
 	int head;
 	int tail;
 } Queue_t;

@@ -1,23 +1,16 @@
 #include "semaphore.h"
 
 //Macro que incluye el codigo de la instruccion maquina xchg
-#define atomic_xchg(A,B) __asm__ __volatile__("lock xchg %1,%0 ;\n":"=ir" (A): "m" (B), "ir" (A));
-
+#define atomic_xchg(A,B) __asm__ __volatile__(	\
+						"lock xchg %1,%0 ;\n"	\
+						: "=ir" (A)				\
+						: "m" (B), "ir" (A)		\
+);
 extern int *g;
 extern int *h;
 
 void initsem(Semaphore_t *sem, int val)
 {
-	int shmid;
-
-	shmid = shmget(0x1234,sizeof(Semaphore_t *), IPC_CREAT | 0666);
-	if(shmid == -1)
-		printf("ERROR SHMGET SEMAPHORE\n");
-	
-	sem = shmat(shmid,NULL,0);
-	if(sem == NULL)
-		printf("ERROR SHMAT SEMAPHORE\n");
-
 	sem->count = val;
 	initqueue(&sem->block_queue);
 }
@@ -49,9 +42,4 @@ void signalsem(Semaphore_t *sem)
 		kill(pid, SIGCONT);
 	}
 	*h = 0;
-}
-
-void clearsem(Semaphore_t *sem)
-{
-	shmdt(sem);	
 }

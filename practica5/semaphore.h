@@ -18,6 +18,5 @@ typedef struct Semaphore
 void initsem(Semaphore_t *sem, int val);
 void waitsem(Semaphore_t *sem);
 void signalsem(Semaphore_t *sem);
-void clearsem(Semaphore_t *sem);
 
 #endif /*SEMAPHORE_H_*/
