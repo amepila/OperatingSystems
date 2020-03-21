@@ -2,7 +2,7 @@
 
 #define CICLOS 10
 
-char *pais[3] = {"Peru","Bolivia","Colombia"};
+char *pais[MAXPROCESS] = {"Peru","Bolivia","Colombia"};
 int *g = 0;
 int *h = 0;
 Semaphore_t *Semp;
@@ -17,7 +17,7 @@ void proceso(int i)
 		fflush(stdout);
 		sleep(rand()%3);
 		printf("- %s Sale\n", pais[i]);
-
+		fflush(stdout);
 		signalsem(Semp);
 		sleep(rand()%3);
 	}
@@ -60,14 +60,14 @@ int main(void)
 	initsem(Semp,1);
 
 	srand(getpid());
-	for(counter = 0; counter < 3; counter++)
+	for(counter = 0; counter < MAXPROCESS; counter++)
 	{
 		pid = fork();
 		if(pid == 0)
 			proceso(counter);
 	}
 
-	for(counter = 0; counter < 3; counter++)
+	for(counter = 0; counter < MAXPROCESS; counter++)
 		pid = wait(&status);
 	
 	shmdt(Semp);
