@@ -1,7 +1,7 @@
 #include "semaphore.h"
 
 //Macro que incluye el codigo de la instruccion maquina xchg
-#define atomic_xchg(A,B)	_asm_volatile( \ 
+#define atomic_xchg(A,B)	__asm__ __volatile__( \ 
 									"	lock xchg %1,%0 ;\n"	\
 									: "=ir" (A)					\
 									: "m" (B), "ir" (A)			\
@@ -31,11 +31,12 @@ void waitsem(Semaphore_t *sem)
 {
 	int l = 1;
 	do { atomic_xchg(l, *g);} while(l!=0);
+	printf("COUNT = %d\n", sem->count);
 	sem->count--;
-
+	//printf("DEBUG\n");
 	if(sem->count < 0)
 	{
-		enqueue(&sem->block_queue,getpid())
+		enqueue(&sem->block_queue,getpid());
 		kill(getpid(),SIGSTOP);
 	}
 	*g = 0;
@@ -48,9 +49,9 @@ void signalsem(Semaphore_t *sem)
 	do { atomic_xchg(l, *g);} while(l!=0);
 	sem->count++;
 
-	if(sem->count == 0)
+	if(sem->count <= 0)
 	{
-		pid = dequeue(sem->block_queue);
+		pid = dequeue(&sem->block_queue);
 		kill(pid, SIGCONT);
 	}
 	*h = 0;

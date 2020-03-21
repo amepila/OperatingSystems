@@ -1,6 +1,12 @@
 #ifndef SEMAPHORE_H_
 #define SEMAPHORE_H_
 
+#include <stdlib.h>
+#include <signal.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "queue.h"
 
 typedef struct Semaphore

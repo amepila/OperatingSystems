@@ -1,9 +1,3 @@
-#include <stdlib.h>
-#include <signal.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include "semaphore.h"
 
 #define CICLOS 10
@@ -19,7 +13,7 @@ void proceso(int i)
 	for(k = 0; k<CICLOS; k++)
 	{
 		waitsem(Semp);
-
+		printf("DEBUG\n");
 		printf("Entra %s ", pais[i]);
 		fflush(stdout);
 		sleep(rand()%3);
@@ -31,21 +25,21 @@ void proceso(int i)
 	exit(0);
 }
 
-int main()
+int main(void)
 {
 	int shmid_g, shmid_h;
 	int pid;
 	int status;
 	int counter;
 
-	smid_g = shmget(IPC_PRIVATE,sizeof(int *), IPC_CREAT | 0666);
+	shmid_g = shmget(IPC_PRIVATE,sizeof(int *), IPC_CREAT | 0666);
 	if(shmid_g == -1)
 		printf("ERROR SHMGET G\n");
 
-	smid_h = shmget(IPC_PRIVATE,sizeof(int *), IPC_CREAT | 0666);
+	shmid_h = shmget(IPC_PRIVATE,sizeof(int *), IPC_CREAT | 0666);
 	if(shmid_h == -1)
 		printf("ERROR SHMGET H\n");
-
+	
 	g = shmat(shmid_g,NULL,0);
 	if(g == NULL)
 		printf("ERROR SHMAT G");
@@ -66,7 +60,7 @@ int main()
 
 	for(counter = 0; counter < MAXTHREAD; counter++)
 		pid = wait(&status);
-
+	
 	clearsem(Semp);
 	shmdt(g);
 	shmdt(h);
