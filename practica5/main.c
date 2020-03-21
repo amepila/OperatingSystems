@@ -3,8 +3,8 @@
 #define CICLOS 10
 
 char *pais[3] = {"Peru","Bolivia","Colombia"};
-int *g;
-int *h;
+int *g = 0;
+int *h = 0;
 Semaphore_t *Semp;
 
 void proceso(int i)
@@ -13,12 +13,12 @@ void proceso(int i)
 	for(k = 0; k<CICLOS; k++)
 	{
 		waitsem(Semp);
-		printf("DEBUG\n");
 		printf("Entra %s ", pais[i]);
 		fflush(stdout);
 		sleep(rand()%3);
 		printf("- %s Sale\n", pais[i]);
 
+		//fflush(stdout);
 		signalsem(Semp);
 		sleep(rand()%3);
 	}
@@ -32,11 +32,11 @@ int main(void)
 	int status;
 	int counter;
 
-	shmid_g = shmget(IPC_PRIVATE,sizeof(int *), IPC_CREAT | 0666);
+	shmid_g = shmget(0x5678,sizeof(g), IPC_CREAT | 0666);
 	if(shmid_g == -1)
 		printf("ERROR SHMGET G\n");
 
-	shmid_h = shmget(IPC_PRIVATE,sizeof(int *), IPC_CREAT | 0666);
+	shmid_h = shmget(0x9012,sizeof(h), IPC_CREAT | 0666);
 	if(shmid_h == -1)
 		printf("ERROR SHMGET H\n");
 	
@@ -48,6 +48,8 @@ int main(void)
 	if(h == NULL)
 		printf("ERROR SHMAT G");
 
+	*g = 0;
+	*h = 0;
 	initsem(Semp,1);
 
 	srand(getpid());

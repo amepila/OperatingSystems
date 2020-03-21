@@ -12,7 +12,6 @@
 typedef struct Semaphore
 {
 	int 	count;
-	int 	block;
 	Queue_t block_queue;
 } Semaphore_t;
 
