@@ -5,16 +5,18 @@
 #include <stdio.h>
 #include <unistd.h>
 
-typedef struct QUEUE 
+#define MAXTHREAD 3
+
+typedef struct Queue 
 {
 	int elements[MAXTHREAD];
 	int head;
 	int tail;
-} QUEUE;
+} Queue_t;
 
-void initqueue(QUEUE *q);
-void enqueue(QUEUE *q, int val);
-int dequeue(QUEUE *q);
-int emptyq(QUEUE *q);
+void initqueue(Queue_t *q);
+void enqueue(Queue_t *q, int val);
+int dequeue(Queue_t *q);
+int emptyq(Queue_t *q);
 
 #endif /*QUEUE_H_*/
