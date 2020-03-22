@@ -67,15 +67,15 @@ void waitsem(Semaphore_t *sem)
  */
 void signalsem(Semaphore_t *sem)
 {
-	int pid;					
-	int l = 1;
-	do { atomic_xchg(l,*g);} while(l!=0);
-	sem->count++;
+	int pid;								/* Variable que almacenara el id del proceso*/		
+	int l = 1;								/* Variable para que entra a la funcion atomica*/
+	do { atomic_xchg(l,*g);} while(l!=0);	/* Funcion atomica*/
+	sem->count++;							/* Aumento del contador del semaforo*/
 
-	if(sem->count <= 0)
-	{
-		pid = dequeue(&sem->block_queue);
-		kill(pid, SIGCONT);
+	if(sem->count <= 0)						/* Si el contador es menor o igual a cero			*/
+	{										/*  significa que el valor anterior era negativo 	*/ 
+		pid = dequeue(&sem->block_queue);	/*  entonces hay procesos encolados y se extrae uno */
+		kill(pid, SIGCONT);					/*  por lo que sera necesario renaudar el proceso 	*/
 	}
 	*h = 0;
 }
