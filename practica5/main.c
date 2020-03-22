@@ -15,8 +15,8 @@
 
 /* Variable que guarda el nombre de los paises*/
 char *pais[MAXPROCESS] = {"Peru","Bolivia","Colombia"};
-int *g = 0;
-int *h = 0;
+int *g = 0;			/* Variable auxiliar para funcion atomica en wait*/
+int *h = 0;			/* Variable auxiliar para funcion atomica en semaforo*/
 Semaphore_t *Semp;	/* Apuntador a semaforo*/
 
 /********************************************************************************************/

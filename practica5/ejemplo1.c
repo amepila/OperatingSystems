@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib>
+#include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 
@@ -33,7 +33,7 @@ void *hilo1(void *arg)
 		printf("Entra %s",pais[i]);
 		fflush(stdout);
 		sleep(rand()%3);
-		printf("- %s Sale/n",pais[i]);
+		printf("- %s Sale\n",pais[i]);
 		//Termina seccion critica
 
 		g=0;
@@ -47,7 +47,7 @@ void *hilo1(void *arg)
 int main()
 {
 	pthread_t tid[3];
-	int rest;
+	int res;
 	int args[3];
 	int i;
 	void *thread_result;
