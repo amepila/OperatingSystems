@@ -1,3 +1,4 @@
+/* Librerias*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -7,45 +8,14 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 
-struct msgbuf {
-    long mtype;       /* message type, must be > 0 */
-    char mtext[30];    /* message data */
-};
-
-int queue;	// Buzón de mensajes
-
-void emisor();
-void receptor();
-
-int main()
+/* Tipo de dato de mensaje*/
+struct msgbuf 
 {
-	int pid;
-	int status;
+    long mtype;   		/* Tipo de mensaje, debe ser mayor > 0 */
+    char mtext[30];		/* Datos del mensajes*/
+} Msgbuf_t;
 
-	// Crear buzón de mensajes 
-	queue=msgget(0x1234,0666|IPC_CREAT);
-	if(queue==-1)
-	{
-		fprintf(stderr,"No se pudo crear el buzón\n");
-		exit(1);
-	}
-	
-	// Crea un proceso donde va a ejecutarse el emisor
-	pid=fork();
-	if(pid==0)
-		emisor();	// El hijo ejecuta el emisor
-	
-	// Crea un proceso donde va a ejecutarse el receptor
-	pid=fork();
-	if(pid==0)
-		receptor();	// El hijo ejecuta el receptor
-	
-	// Esperar a que los dos procesos terminen
-	wait(&status);
-	wait(&status);
-	
-	msgctl(queue, IPC_RMID, NULL);
-}
+int queue;				/* Buzón de mensajes*/
 
 void emisor()
 {
@@ -78,3 +48,35 @@ void receptor()
 	} while(strcmp(mensaje.mtext,"FIN")!=0); // Mientras no sea fin 
 	exit(0);	// Termina el receptor
 }
+
+
+int main()
+{
+	int pid;
+	int status;
+
+	// Crear buzón de mensajes 
+	queue=msgget(0x1234,0666|IPC_CREAT);
+	if(queue==-1)
+	{
+		fprintf(stderr,"No se pudo crear el buzón\n");
+		exit(1);
+	}
+	
+	// Crea un proceso donde va a ejecutarse el emisor
+	pid=fork();
+	if(pid==0)
+		emisor();	// El hijo ejecuta el emisor
+	
+	// Crea un proceso donde va a ejecutarse el receptor
+	pid=fork();
+	if(pid==0)
+		receptor();	// El hijo ejecuta el receptor
+	
+	// Esperar a que los dos procesos terminen
+	wait(&status);
+	wait(&status);
+	
+	msgctl(queue, IPC_RMID, NULL);
+}
+

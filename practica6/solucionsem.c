@@ -12,7 +12,6 @@
 #include <sys/shm.h>
 #include "semaphores.h"
 
-
 #define CICLOS 		10	/* Numero de veces que se ejecuta el proceso*/
 #define MAXPROCESS	3	/* Numero de procesos*/
 
