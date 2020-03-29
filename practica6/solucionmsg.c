@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/shm.h>
-#include "semaphores.h"
+#include "messages.h"
 
 #define CICLOS 10
 
