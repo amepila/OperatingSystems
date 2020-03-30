@@ -32,12 +32,12 @@ void proceso(int i)
 								
 	for(k = 0; k<CICLOS; k++)
 	{
-		semwait(*idsem);
+		semwait(*idsem);				/* El semaforo espera*/
 		printf("Entra %s ", pais[i]);	/* Entra a la seccion critica*/
 		fflush(stdout);					/* Limpieza del buffer*/
 		sleep(rand()%3);				/* Espera de hasta 3 segundos*/
 		printf("- %s Sale\n", pais[i]);	/* Salida de la seccion critica*/
-		semsignal(*idsem);
+		semsignal(*idsem);				/* Senal para habilitar a un semaforo*/
 		sleep(rand()%3);				/* Espera aleatoria de la seccion critica */
 	}
 	exit(0);	/* Termina el proceso*/
