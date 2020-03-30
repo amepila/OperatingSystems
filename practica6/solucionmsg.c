@@ -18,8 +18,9 @@
 #define MAXPROCESS	3	/* Numero de procesos*/
 
 char *pais[3] = {"Peru","Bolivia","Colombia"};	/* Variable que guarda el nombre de los paises*/
-int idmsg;		/* Id de la cola de mensajes*/
-Msgbuf_t *msg;	/* Apuntador a mensaje*/
+int idmsg;					/* Id de la cola de mensajes*/
+Msgbuf_t message;			/* Variable que es mensaje*/
+Msgbuf_t* msg = &message;	/* Apuntador a mensaje*/
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -53,10 +54,9 @@ int main()
 	int counter;	/* Contador de procesos*/
 
 	idmsg = initmsg(IPC_PRIVATE);		/* Creacion del buzon de mensajes*/
-	printf("ID = %d\n",idmsg);
 	msgsend(idmsg, msg);				/* Se inicia con el envio de un mensaje*/
 	srand(getpid());					/* Obtencion random de id de proceso*/
-
+	
 	/* Creacion de procesos*/
 	for(counter = 0; counter < MAXPROCESS; counter++)
 	{

@@ -33,11 +33,9 @@ void msgreceive(int idmsg, Msgbuf_t *msg)
  */
 void msgsend(int idmsg, Msgbuf_t *msg)
 {
-  printf("ID = %d\n",idmsg);
-	msg->mtype = 1;				/* Priorida o tipo del mensaje*/
-	strcpy(msg->mtext,"hola");	/*Cualquier mensaje*/
+  msg->mtype = 1;				        /* Priorida o tipo del mensaje*/
+	strcpy(msg->mtext,"hola");	  /*Cualquier mensaje*/
 	msgsnd(idmsg, msg, sizeof(Msgbuf_t), IPC_NOWAIT); /* NO espera a que sea recibido*/
-  printf("DEBUG\n");
 }
 
 /********************************************************************************************/
@@ -51,7 +49,7 @@ void msgsend(int idmsg, Msgbuf_t *msg)
 int initmsg(int key)
 {
 	int msgid;			/* Cola de mensajes*/
-	msgid = msgget(key,0666|IPC_CREAT|IPC_EXCL);	/* Creacion de buzon para mensajes*/
+	msgid = msgget(key,0666|IPC_CREAT);	/* Creacion de buzon para mensajes*/
 	if(msgid == -1)		/* Verificacion de error al crear el buzon*/
 		printf("ERROR DE CREACION DE BUZON\n");
 	return msgid;
