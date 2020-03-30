@@ -53,6 +53,7 @@ int main()
 	int counter;	/* Contador de procesos*/
 
 	idmsg = initmsg(IPC_PRIVATE);		/* Creacion del buzon de mensajes*/
+	printf("ID = %d\n",idmsg);
 	msgsend(idmsg, msg);				/* Se inicia con el envio de un mensaje*/
 	srand(getpid());					/* Obtencion random de id de proceso*/
 

@@ -1,28 +1,14 @@
-#ifndef MESSAGES_H_
-#define MESSAGES_H_
-
 /**
-  \archivo		messages.h
+  \archivo		  messages.c 
   \descripcion	Este archivo contiene las funciones
-  				de mensajes, donde solo se maneja 1 dato
-  				de mensajes ya que no importa el contenido
-  				sino la senal para moverse
-  \fecha   		29/Mar/20
+  				      de mensajes, donde solo se maneja 1 dato
+  				      de mensajes ya que no importa el contenido
+  				      sino la senal para moverse
+  \fecha   		  29/Mar/20
  */
 
 /* Librerias*/
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <string.h>
-
-/* Tipo de dato de mensaje*/
-typedef struct 
-{
-    long mtype;   		/* Tipo de mensaje, debe ser mayor > 0 */
-    char mtext[30];		/* Datos del mensajes*/
-} Msgbuf_t;
+#include "messages.h"
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -32,7 +18,10 @@ typedef struct
   \entradas  	int idmsg, Msgbuf_t *msg
   \return     	void
  */
-void msgreceive(int idmsg, Msgbuf_t *msg);
+void msgreceive(int idmsg, Msgbuf_t *msg)
+{
+	msgrcv(idmsg, msg, sizeof(Msgbuf_t),1,0);	/* Recepcion de mensaje*/
+}
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -42,7 +31,14 @@ void msgreceive(int idmsg, Msgbuf_t *msg);
   \entradas  	int idmsg, Msgbuf_t *msg
   \return     	void
  */
-void msgsend(int idmsg, Msgbuf_t *msg);
+void msgsend(int idmsg, Msgbuf_t *msg)
+{
+  printf("ID = %d\n",idmsg);
+	msg->mtype = 1;				/* Priorida o tipo del mensaje*/
+	strcpy(msg->mtext,"hola");	/*Cualquier mensaje*/
+	msgsnd(idmsg, msg, sizeof(Msgbuf_t), IPC_NOWAIT); /* NO espera a que sea recibido*/
+  printf("DEBUG\n");
+}
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -52,7 +48,14 @@ void msgsend(int idmsg, Msgbuf_t *msg);
   \entradas  	int key
   \return     	int
  */
-int initmsg(int key);
+int initmsg(int key)
+{
+	int msgid;			/* Cola de mensajes*/
+	msgid = msgget(key,0666|IPC_CREAT|IPC_EXCL);	/* Creacion de buzon para mensajes*/
+	if(msgid == -1)		/* Verificacion de error al crear el buzon*/
+		printf("ERROR DE CREACION DE BUZON\n");
+	return msgid;
+}
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -62,6 +65,7 @@ int initmsg(int key);
   \entradas  	int idmsg
   \return     	void
  */
-void erasemsg(int idmsg);
-
-#endif /*MESSAGES_H_*/
+void erasemsg(int idmsg)
+{
+	msgctl(idmsg, IPC_RMID, NULL);	/* Se elimina el mensaje*/
+}

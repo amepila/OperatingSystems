@@ -1,20 +1,13 @@
-#ifndef SEMAPHORE_H_
-#define SEMAPHORE_H_
-
 /**
-  \archivo		semaphore.h   
-  \descripcion	Este header incluye el las funciones de semaforos
-  \autores 		Jose Andres Hernandez Hernandez 
-  				Andrea Miriam Perez Huizar 
+  \archivo		semaphores.c 
+  \descripcion	Este archivo contiene las funciones
+  				de semaforos, donde solo se maneja 1
   \fecha   		29/Mar/20
  */
 
 /* Librerias*/
-#include <sys/sem.h> 
-#include <sys/types.h> 
-#include <sys/ipc.h> 
-
-#define SEM_ID int
+#include <stdio.h>
+#include "semaphores.h"
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -25,7 +18,16 @@
   \entradas  	int idsem
   \return     	void
  */
-void semwait(int idsem);
+void semwait(int idsem)
+{
+	struct sembuf s;		/* Se crea un tipo de dato semaforo*/
+	s.sem_num=0; 			/* Se elige solo un semaforo*/
+	s.sem_op=-1;			/* Se resta para que solo accese un semaforo*/
+	s.sem_flg=SEM_UNDO;		
+	
+	semop(idsem,&s,1);		/* Se pasa la las indicaciones a la primitiva*/
+	return;
+}
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -36,7 +38,16 @@ void semwait(int idsem);
   \entradas  	int idsem
   \return     	void
  */	
-void semsignal(int idsem);
+void semsignal(int idsem)
+{
+	struct sembuf s;		/* Se crea un tipo de dato semaforo*/
+	s.sem_num=0;			/* Se elige solo un semaforo*/
+	s.sem_op=1;				/* Se suma para que accese se accese un elemento*/
+	s.sem_flg=SEM_UNDO;
+	
+	semop(idsem,&s,1);		/* Se pasa la las indicaciones a la primitiva*/
+	return;
+}
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -46,7 +57,13 @@ void semsignal(int idsem);
   \entradas  	int key, int val
   \return     	int
  */	
-int initsem(int key, int val);
+int initsem(int key, int val)
+{
+	int semid;
+	semid=semget(key,1,0666|IPC_CREAT); 	/* Se solicita espacio para un semaforo*/
+	semctl(semid,0,SETVAL,val);				/* Se solicita el acceso inicial de un semaforo*/
+	return semid;
+}
 
 /********************************************************************************************/
 /********************************************************************************************/
@@ -56,6 +73,8 @@ int initsem(int key, int val);
   \entradas  	int idsem
   \return     	void
  */
-void erasesem(int idsem);
-
-#endif /*SEMAPHORE_H_*/
+void erasesem(int idsem)
+{
+	semctl(idsem,0,IPC_RMID,0);		/* Se elimina el semaforo*/
+	return;
+}

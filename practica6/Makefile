@@ -1,5 +1,5 @@
 all: solucionsem solucionmsg
-solucionsem: solucionsem.c
-	gcc -o solucionsem solucionsem.c
-solucionmsg: solucionmsg.c
-	gcc -o solucionmsg solucionmsg.c
+solucionsem: semaphores.c solucionsem.c
+	gcc -o solucionsem semaphores.c solucionsem.c
+solucionmsg: messages.c solucionmsg.c
+	gcc -o solucionmsg messages.c solucionmsg.c
