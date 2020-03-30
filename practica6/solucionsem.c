@@ -54,7 +54,7 @@ int main()
 	/**CONFIGURACION PARA COMUNICACION DE LA MEMORIA COMPARTIDA*/
 	
 	/* Configuracion para que los procesos puedan comunicarse con el semaforo*/
-	shmid = shmget(IPC_PRIVATE,sizeof(idsem), IPC_CREAT | 0666);
+	shmid = shmget(IPC_PRIVATE,sizeof(int *), IPC_CREAT | 0666);
 	if(shmid == -1)		/* Verificacion de error en configuracion*/
 		printf("ERROR SHMGET SEMAPHORE\n");
 
@@ -82,7 +82,6 @@ int main()
 		pid = wait(&status);
 
 	/* Se borra y libera la memoria compartida*/
-	shmdt(idsem);
 	erasesem(*idsem);
 	return 0;
 }

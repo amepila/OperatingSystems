@@ -24,7 +24,7 @@
 void semwait(int idsem)
 {
 	struct sembuf s;		/* Se crea un tipo de dato semaforo*/
-	s.sem_num=1; 			/* Número de semáforo en el arreglo*/
+	s.sem_num=0; 			/* Se elige solo un semaforo*/
 	s.sem_op=-1;			/* Se resta para que solo accese un semaforo*/
 	s.sem_flg=SEM_UNDO;		
 	
@@ -44,7 +44,7 @@ void semwait(int idsem)
 void semsignal(int idsem)
 {
 	struct sembuf s;		/* Se crea un tipo de dato semaforo*/
-	s.sem_num=1;			/* Número de semáforo en el arreglo*/
+	s.sem_num=0;			/* Se elige solo un semaforo*/
 	s.sem_op=1;				/* Se suma para que accese se accese un elemento*/
 	s.sem_flg=SEM_UNDO;
 	
@@ -64,7 +64,7 @@ int initsem(int key, int val)
 {
 	int semid;
 	semid=semget(key,1,0666|IPC_CREAT); 	/* Se solicita espacio para un semaforo*/
-	semctl(semid,1,SETVAL,val);				/* Se solicita el acceso inicial de un semaforo*/
+	semctl(semid,0,SETVAL,val);				/* Se solicita el acceso inicial de un semaforo*/
 	return semid;
 }
 
