@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/shm.h>
+#include <sys/wait.h>
 #include "messages.h"
 
 #define CICLOS 		10	/* Numero de veces que se ejecuta el proceso*/

@@ -12,12 +12,13 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <string.h>
 
 /* Tipo de dato de mensaje*/
-struct msgbuf 
+typedef struct 
 {
     long mtype;   		/* Tipo de mensaje, debe ser mayor > 0 */
-    char mtext[1];		/* Datos del mensajes*/
+    char mtext[30];		/* Datos del mensajes*/
 } Msgbuf_t;
 
 /********************************************************************************************/
@@ -43,9 +44,9 @@ void msgreceive(int idmsg, Msgbuf_t *msg)
  */
 void msgsend(int idmsg, Msgbuf_t *msg)
 {
-	msg->mtype = 1;		/* Priorida o tipo del mensaje*/
-	msg->mtext = "1";	/*Cualquier mensaje*/
-	msgsend(idmsg, msg, sizeof(Msgbuf_t), IPC_NOWAIT); /* NO espera a que sea recibido*/
+	msg->mtype = 1;				/* Priorida o tipo del mensaje*/
+	strcpy(msg->mtext,"hola");	/*Cualquier mensaje*/
+	msgsnd(idmsg, msg, sizeof(Msgbuf_t), IPC_NOWAIT); /* NO espera a que sea recibido*/
 }
 
 /********************************************************************************************/
