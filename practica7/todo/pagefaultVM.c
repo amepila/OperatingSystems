@@ -141,6 +141,28 @@ int searchvirtualframe()
 
 int getfifo()
 {
-    
+    int counter;
+    int counter_presentes = 0;
+    int old;
 
+    //Se busca la pagina con mas tiempo en memoria fisica
+    for(counter = 0; counter < ptlr; counter++)
+    {
+        //Se busca las paginas con mas tiempo con su bit presente
+        if((ptlr + counter)->presente == 1)
+        {
+            if(counter_presentes >= 1)
+            {
+                // Si la pagina actual tiene mas tiempo se vuelve el mas antiguo
+                if((ptlr + old)->tarrived < (ptlr + (counter))->tarrived)
+                    old = counter;
+            }
+            else
+            {
+                old = counter;      //Guarda el primero en memoria fisica como referencia
+            }
+            counter_presentes++;    //Este contador es unicamente de referencia 
+        }
+    }
+    return old;
 }
