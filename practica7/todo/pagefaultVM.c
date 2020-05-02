@@ -62,10 +62,10 @@ int pagefault(char *vaddress)
     }
 
     // Cuenta los marcos asignados al proceso
-    i=countframesassigned();
+    i = countframesassigned();
 
     // Si ya ocupó todos sus marcos, expulsa una página
-    if(i>=RESIDENTSETSIZE)
+    if(i >= RESIDENTSETSIZE)
     {
 		// Buscar una página a expulsar
         pag_a_expulsar = getfifo();
@@ -86,9 +86,8 @@ int pagefault(char *vaddress)
         vframe = searchvirtualframe();
 		// Si no hay frames virtuales en memoria secundaria regresa error
         if(vframe == -1)
-		{
             return(-1);
-        }
+
         // Copia el frame a memoria secundaria, actualiza la tabla de páginas y libera el marco de la memoria principal
         copyframe(frame,vframe);
         (ptbr + pag_a_expulsar)->framenumber = vframe;
@@ -101,15 +100,14 @@ int pagefault(char *vaddress)
     frame = getfreeframe();
 
 	// Si no hay marcos físicos libres en el sistema regresa error
-    if(ptbr[pag_del_proceso].framenumber == 1)
-    {
+    if(frame == -1)
         return(-1); // Regresar indicando error de memoria insuficiente
-    }
 
     // Si la página estaba en memoria secundaria
-    if(vframe)
+    if(vframe != -1)
     {
         // Cópialo al frame libre encontrado en memoria principal y transfiérelo a la memoria física
+        copyframe(vframe,frame);
     }
    
 	// Poner el bit de presente en 1 en la tabla de páginas y el frame 
