@@ -2,7 +2,7 @@
   \archivo      pagefaultVM.c  
   \descripcion  Archivo fuente para el intercambio
                 memoria fisica y virtual
-  \fecha        1/May/20
+  \fecha        17/May/20
  */
 
 #include <stdio.h>
