@@ -290,10 +290,10 @@ int vdread(int fd, char *buffer, int bytes)
 		//Obtener la direccion de donde esta el bloque que corresponde
 		// a la posicion actual
 		current_ptr = currpostoptr(fd);
-		if(currptr == NULL)
+		if(current_ptr == NULL)
 			return (-1);
 
-		current_block = *currptr;
+		current_block = *current_ptr;
 
 		//Si el bloque esta en blanco, regresa con error
 		if(current_block == 0)
@@ -307,7 +307,7 @@ int vdread(int fd, char *buffer, int bytes)
 		}
 
 		//Copia el caracter al buffer
-		buffer[counter] = openfiles[fd].buffer[openfiles[fd],currpos%1024];
+		buffer[counter] = openfiles[fd].buffer[openfiles[fd].currpos%1024];
 
 		//Incrementa la posicion
 		openfiles[fd].currpos++;
@@ -317,7 +317,7 @@ int vdread(int fd, char *buffer, int bytes)
 			break;
 
 		//Incrementa el contador
-		cont++;
+		counter++;
 	}
 	return(counter);
 } 
